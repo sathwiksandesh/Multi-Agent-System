@@ -4,9 +4,7 @@ from app.agents.orchestrator import run_agent
 
 app = FastAPI()
 
-# ✅ UI PAGE
-@app.get("/", response_class=HTMLResponse)
-@app.get("/", response_class=HTMLResponse)
+
 @app.get("/", response_class=HTMLResponse)
 def home():
     return """
@@ -111,18 +109,6 @@ def home():
         <script>
             const chat = document.getElementById("chat");
 
-            // ✅ LOAD CHAT HISTORY
-            window.onload = function() {
-                const saved = JSON.parse(localStorage.getItem("chat_history")) || [];
-                saved.forEach(msg => addMessage(msg.text, msg.type));
-            }
-
-            function saveMessage(text, type) {
-                const history = JSON.parse(localStorage.getItem("chat_history")) || [];
-                history.push({ text, type });
-                localStorage.setItem("chat_history", JSON.stringify(history));
-            }
-
             function addMessage(text, className) {
                 const div = document.createElement("div");
                 div.className = "message " + className;
@@ -138,11 +124,9 @@ def home():
                 if (!query) return;
 
                 addMessage(query, "user");
-                saveMessage(query, "user");
-
                 input.value = "";
 
-                // ✅ TYPING ANIMATION
+                // Typing animation
                 const typing = document.createElement("div");
                 typing.className = "message bot typing";
                 typing.innerText = "AI is typing...";
@@ -157,9 +141,7 @@ def home():
                     const data = await response.json();
 
                     chat.removeChild(typing);
-
                     addMessage(data.response, "bot");
-                    saveMessage(data.response, "bot");
 
                 } catch (error) {
                     chat.removeChild(typing);
@@ -179,7 +161,7 @@ def home():
     </html>
     """
 
-# ✅ API ROUTE
+
 @app.post("/run")
 def run(query: str):
     result = run_agent(query)
